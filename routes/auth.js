@@ -10,7 +10,16 @@ router.get('/signup', authController.getSignup);
 router.post('/login', authController.postLogin);
 router.post(
     '/signup',
-    check('email').isEmail().withMessage('Please enter a valid email.'),
+    check('email')
+        .isEmail()
+        .withMessage('Please enter a valid email.')
+        .custom((value, { req }) => {
+            if (value === 'test@test.com') {
+                throw new Error('This email address is forbidden.');
+            }
+            return true;
+        }),
+    check('password').isLength({ min: 5 }),
     authController.postSignup
 );
 router.post('/logout', authController.postLogout);
